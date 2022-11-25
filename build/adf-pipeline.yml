@@ -71,7 +71,7 @@ stages:
 
       - task: PublishPipelineArtifact@1
         inputs:
-          targetPath: '$(Build.SourcesDirectory)/.pipelines/ArmTemplate'
+          targetPath: '$(Build.SourcesDirectory)/build/ArmTemplate'
           artifact: 'adf-artifact-$(Build.BuildNumber)'
           publishLocation: 'pipeline'
 
