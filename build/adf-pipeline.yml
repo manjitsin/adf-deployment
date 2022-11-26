@@ -1,4 +1,9 @@
-trigger: none
+trigger:
+  batch: false
+  branches:
+    include:
+      - develop #collaboration branch
+      - mainn
 
 pr:
    branches:
