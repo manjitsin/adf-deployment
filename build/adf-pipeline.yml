@@ -25,18 +25,18 @@ variables:
 
 # Installs Node and the npm packages saved in your package.json files in the .pipelines folder
 stages:
-  # - stage: Validate_ADF_Code
-  #   pool:
-  #     vmImage: 'windows-latest'
-  #   jobs:
-  #   - job: Build_ADF_Code
-  #     displayName: 'Validating the ADF Code'
-  #     steps:
-  #     - task: BuildADFTask@1
-  #       inputs:
-  #         DataFactoryCodePath: '$(adf_code_path)'
-  #         Action: 'Build'
-  #       continueOnError: true
+  - stage: Validate_ADF_Code
+    pool:
+      vmImage: 'windows-latest'
+    jobs:
+    - job: Build_ADF_Code
+      displayName: 'Validating the ADF Code'
+      steps:
+      - task: BuildADFTask@1
+        inputs:
+          DataFactoryCodePath: '$(adf_code_path)'
+          Action: 'Build'
+        continueOnError: true
 
   - stage: Build_And_Publish_ADF_Artifacts
     
