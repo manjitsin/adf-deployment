@@ -1,9 +1,4 @@
-trigger:
-  batch: false
-  branches:
-    include:
-      - develop
-      - mainn
+trigger: none
 
 pr:
    branches:
