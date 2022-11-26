@@ -1,9 +1,14 @@
-trigger: none
+trigger:
+  batch: false
+  branches:
+    include:
+      - develop
+      - mainn
 
 pr:
    branches:
      include:
-     - main
+     - mainn
      - develop
 
 pool:
@@ -124,7 +129,7 @@ stages:
         #     TriggerStatus: 'start'
 
   - stage: Deploy_to_PreProd
-    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['build.SourceBranchName'], 'main'))
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['build.SourceBranchName'], 'mainn'))
     displayName: Deploy Pre Prod Stage
     dependsOn: Build_And_Publish_ADF_Artifacts
     jobs: 
