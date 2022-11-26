@@ -11,7 +11,10 @@ pool:
 
 
 variables:
-  - group: demo
+  - ${{ if eq(variables['build.SourceBranchName'], 'develop') }}:
+      - group: demo
+  - ${{ if eq(variables['build.SourceBranchName'], 'main') }}:
+      - group: demo1
   - name: adf_code_path
     value: "$(Build.SourcesDirectory)/data_ops/adf"
   - name: adf_package_file_path
