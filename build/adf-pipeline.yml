@@ -18,7 +18,7 @@ variables:
     value: "$(Build.SourcesDirectory)/build/"
 
 
-# Installs Node and the npm packages saved in your package.json file in the .pipelines folder
+# Installs Node and the npm packages saved in your package.json files in the .pipelines folder
 stages:
   # - stage: Validate_ADF_Code
   #   pool:
