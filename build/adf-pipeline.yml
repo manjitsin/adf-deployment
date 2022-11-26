@@ -1,4 +1,9 @@
-trigger: none
+trigger:
+  batch: false
+  branches:
+    include:
+      - develop #collaboration branch
+      - mainn
 
 pr:
    branches:
@@ -160,7 +165,7 @@ stages:
             csmFile: '$(Pipeline.Workspace)/adf-artifact-$(Build.BuildNumber)/ARMTemplateForFactory.json'
             csmParametersFile: '$(Pipeline.Workspace)/adf-artifact-$(Build.BuildNumber)/ARMTemplateParametersForFactory.json'
             # overrideParameters: '-factoryName $(azure_data_factory_name) -LS_ACAI_DW_connectionString $(dw_connection_string) -LS_RPRS_AKV_properties_typeProperties_baseUrl "https://$(azure_keyvault_name).vault.azure.net/" -LS_RPRS_Datalake001_properties_typeProperties_url "https://$(azure_storage_account_name).dfs.core.windows.net/" -LS_ADB_DBW01_properties_typeProperties_existingClusterId $(azure_databricks_cluster_id) -LS_ADB_DBW01_properties_typeProperties_domain $(azure_databricks_workspace_url) -LS_ADB_DBW01_properties_typeProperties_workspaceResourceId "/subscriptions/$(azure_subscription_id)/resourceGroups/$(resource_group_name)/providers/Microsoft.Databricks/workspaces/$(azure_databricks_name)" -TR_Bronze_ACAI_BLOB_properties_typeProperties_scope "/subscriptions/$(azure_subscription_id)/resourceGroups/$(resource_group_name)/providers/Microsoft.Storage/storageAccounts/$(azure_storage_account_name)"'
-            overrideParameters: '-factoryName "adf-deploy-stage"'
+            overrideParameters: '-factoryName "adf-deploy-stage" -adls_connection_properties_typeProperties_url "https://synapseetlde.dfs.core.windows.net/" -databricks_connection_properties_typeProperties_existingClusterId "0825-083905-y23l0k5q" -keyvault_connection_properties_typeProperties_baseUrl "https://dataengspike.vault.azure.net/"'
             deploymentMode: 'Incremental'
 
         # - task: toggle-adf-trigger@2
