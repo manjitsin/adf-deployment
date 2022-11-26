@@ -78,7 +78,7 @@ stages:
   - stage: Deploy_to_Dev
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['build.SourceBranchName'], 'main'))
     displayName: Deploy Dev Stage
-    # dependsOn: Build_And_Publish_ADF_Artifacts
+    dependsOn: Build_And_Publish_ADF_Artifacts
     jobs: 
       - job: Deploy_Dev
         displayName: 'Deployment - PreProd'
@@ -122,7 +122,7 @@ stages:
   - stage: Deploy_to_PreProd
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['build.SourceBranchName'], 'develop'))
     displayName: Deploy Pre Prod Stage
-    # dependsOn: Build_And_Publish_ADF_Artifacts
+    dependsOn: Build_And_Publish_ADF_Artifacts
     jobs: 
       - job: Deploy_PreProd
         displayName: 'Deployment - PreProd'
