@@ -17,11 +17,13 @@ pool:
 
 variables:
   - ${{ if eq(variables['build.SourceBranchName'], 'develop') }}:
-      - group: demo
-  - ${{ if eq(variables['build.SourceBranchName'], 'mainn') }}:
-      - group: demo1
+      - group: adf-dev
+  - ${{ if eq(variables['build.SourceBranchName'], 'main') }}:
+      - group: adf-pre-prod
+
   - name: adf_code_path
     value: "$(Build.SourcesDirectory)/data_ops/adf"
+    
   - name: adf_package_file_path
     value: "$(Build.SourcesDirectory)/build/"
 
@@ -101,13 +103,13 @@ stages:
             artifactName: 'adf-artifact-$(Build.BuildNumber)'
             targetPath: '$(Pipeline.Workspace)/adf-artifact-$(Build.BuildNumber)'
 
-        # - task: toggle-adf-trigger@2
-        #   inputs:
-        #     azureSubscription: '$(azure_service_connection_name)'
-        #     ResourceGroupName: '$(resource_group_name)'
-        #     DatafactoryName: '$(azure_data_factory_name)'
-        #     TriggerFilter: 'RPRS_Dataload_TR'
-        #     TriggerStatus: 'stop'
+        - task: toggle-adf-trigger@2
+          inputs:
+            azureSubscription: '$(azure_service_connection_name)'
+            ResourceGroupName: '$(resource_group_name)'
+            DatafactoryName: '$(azure_data_factory_name)'
+            TriggerFilter: 'RPRS_Dataload_TR'
+            TriggerStatus: 'stop'
 
         - task: AzureResourceManagerTemplateDeployment@3
           inputs:
@@ -120,16 +122,16 @@ stages:
             templateLocation: 'Linked artifact'
             csmFile: '$(Pipeline.Workspace)/adf-artifact-$(Build.BuildNumber)/ARMTemplateForFactory.json'
             csmParametersFile: '$(Pipeline.Workspace)/adf-artifact-$(Build.BuildNumber)/ARMTemplateParametersForFactory.json'
-            # overrideParameters: '-factoryName $(azure_data_factory_name) -LS_ACAI_DW_connectionString $(dw_connection_string) -LS_RPRS_AKV_properties_typeProperties_baseUrl "https://$(azure_keyvault_name).vault.azure.net/" -LS_RPRS_Datalake001_properties_typeProperties_url "https://$(azure_storage_account_name).dfs.core.windows.net/" -LS_ADB_DBW01_properties_typeProperties_existingClusterId $(azure_databricks_cluster_id) -LS_ADB_DBW01_properties_typeProperties_domain $(azure_databricks_workspace_url) -LS_ADB_DBW01_properties_typeProperties_workspaceResourceId "/subscriptions/$(azure_subscription_id)/resourceGroups/$(resource_group_name)/providers/Microsoft.Databricks/workspaces/$(azure_databricks_name)" -TR_Bronze_ACAI_BLOB_properties_typeProperties_scope "/subscriptions/$(azure_subscription_id)/resourceGroups/$(resource_group_name)/providers/Microsoft.Storage/storageAccounts/$(azure_storage_account_name)"'
+            overrideParameters: '-factoryName "$(azure_data_factory_name)" -adls_connection_properties_typeProperties_url "https://$(azure_storage_account_name).dfs.core.windows.net/" -databricks_connection_properties_typeProperties_existingClusterId $(azure_databricks_cluster_id) -keyvault_connection_properties_typeProperties_baseUrl "https://$(azure_keyvault_name).vault.azure.net/"'
             deploymentMode: 'Incremental'
 
-        # - task: toggle-adf-trigger@2
-        #   inputs:
-        #     azureSubscription: '$(azure_service_connection_name)'
-        #     ResourceGroupName: '$(resource_group_name)'
-        #     DatafactoryName: '$(azure_data_factory_name)'
-        #     TriggerFilter: 'RPRS_Dataload_TR'
-        #     TriggerStatus: 'start'
+        - task: toggle-adf-trigger@2
+          inputs:
+            azureSubscription: '$(azure_service_connection_name)'
+            ResourceGroupName: '$(resource_group_name)'
+            DatafactoryName: '$(azure_data_factory_name)'
+            TriggerFilter: 'RPRS_Dataload_TR'
+            TriggerStatus: 'start'
 
   - stage: Deploy_to_PreProd
     condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['build.SourceBranchName'], 'mainn'))
@@ -145,13 +147,13 @@ stages:
             artifactName: 'adf-artifact-$(Build.BuildNumber)'
             targetPath: '$(Pipeline.Workspace)/adf-artifact-$(Build.BuildNumber)'
 
-        # - task: toggle-adf-trigger@2
-        #   inputs:
-        #     azureSubscription: '$(azure_service_connection_name)'
-        #     ResourceGroupName: '$(resource_group_name)'
-        #     DatafactoryName: '$(azure_data_factory_name)'
-        #     TriggerFilter: 'RPRS_Dataload_TR'
-        #     TriggerStatus: 'stop'
+        - task: toggle-adf-trigger@2
+          inputs:
+            azureSubscription: '$(azure_service_connection_name)'
+            ResourceGroupName: '$(resource_group_name)'
+            DatafactoryName: '$(azure_data_factory_name)'
+            TriggerFilter: 'RPRS_Dataload_TR'
+            TriggerStatus: 'stop'
 
         - task: AzureResourceManagerTemplateDeployment@3
           inputs:
@@ -164,14 +166,13 @@ stages:
             templateLocation: 'Linked artifact'
             csmFile: '$(Pipeline.Workspace)/adf-artifact-$(Build.BuildNumber)/ARMTemplateForFactory.json'
             csmParametersFile: '$(Pipeline.Workspace)/adf-artifact-$(Build.BuildNumber)/ARMTemplateParametersForFactory.json'
-            # overrideParameters: '-factoryName $(azure_data_factory_name) -LS_ACAI_DW_connectionString $(dw_connection_string) -LS_RPRS_AKV_properties_typeProperties_baseUrl "https://$(azure_keyvault_name).vault.azure.net/" -LS_RPRS_Datalake001_properties_typeProperties_url "https://$(azure_storage_account_name).dfs.core.windows.net/" -LS_ADB_DBW01_properties_typeProperties_existingClusterId $(azure_databricks_cluster_id) -LS_ADB_DBW01_properties_typeProperties_domain $(azure_databricks_workspace_url) -LS_ADB_DBW01_properties_typeProperties_workspaceResourceId "/subscriptions/$(azure_subscription_id)/resourceGroups/$(resource_group_name)/providers/Microsoft.Databricks/workspaces/$(azure_databricks_name)" -TR_Bronze_ACAI_BLOB_properties_typeProperties_scope "/subscriptions/$(azure_subscription_id)/resourceGroups/$(resource_group_name)/providers/Microsoft.Storage/storageAccounts/$(azure_storage_account_name)"'
-            overrideParameters: '-factoryName "adf-deploy-stage" -adls_connection_properties_typeProperties_url "https://synapseetlde.dfs.core.windows.net/" -databricks_connection_properties_typeProperties_existingClusterId "0825-083905-y23l0k5q" -keyvault_connection_properties_typeProperties_baseUrl "https://dataengspike.vault.azure.net/"'
+            overrideParameters: '-factoryName "$(azure_data_factory_name)" -adls_connection_properties_typeProperties_url "https://$(azure_storage_account_name).dfs.core.windows.net/" -databricks_connection_properties_typeProperties_existingClusterId $(azure_databricks_cluster_id) -keyvault_connection_properties_typeProperties_baseUrl "https://$(azure_keyvault_name).vault.azure.net/"'
             deploymentMode: 'Incremental'
 
-        # - task: toggle-adf-trigger@2
-        #   inputs:
-        #     azureSubscription: '$(azure_service_connection_name)'
-        #     ResourceGroupName: '$(resource_group_name)'
-        #     DatafactoryName: '$(azure_data_factory_name)'
-        #     TriggerFilter: 'RPRS_Dataload_TR'
-        #     TriggerStatus: 'start'
+        - task: toggle-adf-trigger@2
+          inputs:
+            azureSubscription: '$(azure_service_connection_name)'
+            ResourceGroupName: '$(resource_group_name)'
+            DatafactoryName: '$(azure_data_factory_name)'
+            TriggerFilter: 'RPRS_Dataload_TR'
+            TriggerStatus: 'start'
