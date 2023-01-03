@@ -1,5 +1,5 @@
 {
-	"name": "csv",
+	"name": "source",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "adls_connection",
@@ -11,7 +11,8 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"fileName": "cereal.csv",
-				"fileSystem": "source"
+				"folderPath": "bronze",
+				"fileSystem": "datalake"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
